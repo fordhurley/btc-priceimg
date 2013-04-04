@@ -1,0 +1,141 @@
+body {
+	background-color: #fff;
+	text-align: center;
+}
+
+a {
+color: #c00;
+}
+
+form{
+	margin: 0px;
+	padding: 0px;
+}
+
+p, li, div, span {
+     font-family: monospace, verdana, arial, sans-serif; 
+     text-decoration:none; 
+}
+
+small{
+	font-size: 10px;
+}
+
+code {
+    background-color: #eee;
+}
+
+code.block {
+    margin-left: 10px;
+}
+
+.pre_container {
+	text-align: left;
+	padding: 0px;
+	width: 740px;
+	margin: 0px auto;
+}
+
+#sitetitle {
+	margin-top: 20px;
+	padding-left: 20px;
+	display: inline-block;
+	font-size: 26px;
+}
+#sitetitle a {
+	color: black;
+	text-decoration: none;
+}
+
+#sitetitle span {
+	font-style: italic;
+}
+
+.center_container {
+	text-align: left;
+	/*border: 1px solid #b9b9b9;*/
+	padding: 0px 20px;
+	width: 700px;
+	margin: 0px auto;
+	background-color: white;
+}
+
+.box {
+	padding-bottom: 20px ;
+	margin: 0 0 5px 0;
+	display: inline-block;
+}
+.boxtitle {
+	font-size: 19px;
+	width: 100%;
+	display: inline-block;
+	padding-bottom: 1px;
+	border-bottom: 1px solid #b7b7b7;
+}
+.boxcontent {
+	padding-top: 2px;
+	display: inline-block;
+	font-size: 15px;
+	padding-bottom: 7px;
+	width: 700px;
+	min-height: 50px;
+}
+
+.submitbutton {
+	padding: 5px 10px;
+	border: none;
+	background-color: #c00;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+	margin-bottom: 7px;
+}
+
+.submitbutton:hover {
+	border: none;
+	background-color: #a00;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+#footer {
+	text-decoration: none;
+	font-size: 11px;
+	text-align: center;
+	padding: 4px 0px 10px 0px;
+	color: #666;
+	width: 600px;
+	text-align: center;
+	margin: 0px auto;
+}
+
+.infodata{
+	float: left;
+	width: 490px;
+	height: 20px;
+	line-height: 20px;
+}
+
+.clear{
+	clear:both;
+}
+
+#topnav{
+	width: 640px;
+	font-weight: bold;
+	font-size: 11px;
+	line-height: 11px;
+	text-align: right;
+	color: #b7b7b7;
+	margin-bottom: -11px;
+}
+#topnav a{
+	padding: 0px 5px;
+	text-decoration: none;
+	color: #7b7b7b;;
+}
+#topnav a:hover{
+	text-decoration: underline;
+	color: #3d3d3d;
+}
