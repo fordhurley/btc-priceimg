@@ -1,0 +1,66 @@
+<!doctype html>
+<head>
+    <title>fizzisist.com - bitcoin price image generator</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-1675503-8']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+</head>
+
+<body>
+    <div class="pre_container">
+        <div id="sitetitle">
+            <b>Bitcoin price image generator</b> <span></span>
+        </div>
+        
+    </div>    
+    <div class="center_container">
+        <div class="box">
+            <div class="boxcontent">
+                <p>The bitcoin price image generator is a simple tool that creates a dynamic image of a price in BTC, based on a fixed USD price. The resulting image can be embedded in a forum post, for example, and it will always show an up-to-date BTC equivalent price. This is useful when you want to show a price for something in BTC, but you want the price to be pinned to a USD value (and not have to update your post every day as the BTC/USD exchange rate fluctuates). This tool relies on the Mt. Gox 24 hour average from <a href="https://en.bitcoin.it/wiki/MtGox/API/HTTP/v1">their ticker</a>.</p>
+                <p>Current exchange rate is: {{ usd_per_btc }}</p>
+                <p>Problems? Suggestions? <a href="https://bitcointalk.org/index.php?topic=151565">Discuss here</a>.</p>
+            </div>
+        </div>
+        
+        <div class="box">
+            <div class="boxtitle">Usage</div>
+            <div class="boxcontent">
+                <p>Simply build a URL of the form: <br />
+                <code class="block">{{ url_for('priceimg', _external=True) }}/&lt;price_in_usd&gt;</code> </p>
+                <p>Where <code>&lt;price_in_usd&gt;</code> is the price you want in USD.</p>
+                <p>You can also add an optional color argument to change the color of the text: <br />
+                <code class="block">{{ url_for('priceimg', _external=True) }}/&lt;price_in_usd&gt;/&lt;color&gt;</code> </p>
+                <p>The color code should be an html-like hex code (for white: 'ffffff' or 'fff' or simply 'f'). The background of the image will be transparent.</p>
+            </div>
+        </div>
+        
+        <div class="box">
+            <div class="boxtitle">Example</div>
+            <div class="boxcontent">
+                <p>Say you want to sell an item for $10. You can generate an image using:<br />
+                <code class="block"><a href="{{ url_for('priceimg', _external=True) }}/10.00">{{ url_for('priceimg', _external=True) }}/10.00</a></code> </p>
+                <p>Which will yield the image: <img src="{{ url_for('priceimg') }}/10.00" /></p>
+                <p>If you want to change the color (to more closely match the text in your forum post, for example), use: <br />
+                <code class="block"><a href="{{ url_for('priceimg', _external=True) }}/10.00/00f">{{ url_for('priceimg', _external=True) }}/10.00/00f</a></code> </p>
+                <p>Which yields: <img src="{{ url_for('priceimg') }}/10.00/00f" /></p>
+                <p>You can then embed the image in your post using that URL. In BBCode, this would be:<br />
+                <code class="block">[img]{{ url_for('priceimg', _external=True) }}/10.00[/img]</code></p>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div id="footer">
+        <a href="http://fizzisist.com">Home</a> |
+        Tips? Why not! <a href="bitcoin:122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm?label=fizzisist">122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm</a>
+    </div>
+</body>
