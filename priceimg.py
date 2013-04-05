@@ -33,6 +33,7 @@ cache = SimpleCache()
 
 @app.route('/')
 def home():
+    """Serve the home page."""
     usd_per_btc = getUSDPerBTC()
     if usd_per_btc is None:
         usd_per_btc = 'Mt Gox Error'
@@ -44,6 +45,12 @@ def home():
 @app.route('/img/<price_usd>')
 @app.route('/img/<price_usd>/<color>')
 def priceimg(price_usd=None, color='0'):
+    """Serve the image.
+
+    The StringIO trick is from here:
+    http://stackoverflow.com/a/10170635/576932
+    """
+
     try:
         price_usd = float(price_usd)
     except:
@@ -66,6 +73,25 @@ def priceimg(price_usd=None, color='0'):
     return flask.send_file(img_io, attachment_filename='img.png')
 
 def getColor(color):
+    """Decode color string argument from URL
+
+    Colors can be passed as either a full HTML code (#aac24e),
+    short HTML code (#c00), or as a single hex digit for
+    grayscale (#5). The '#' symbol is always optional. Case is
+    ignored.
+
+    Returns a RGB tuple (values 0-255).
+
+    >>> getColor('#aac24e')
+    (170, 194, 78)
+
+    >>> getColor('c00')
+    (204, 0, 0)
+
+    >>> getColor('5')
+    (85, 85, 85)
+    """
+
     if color[0] == '#':
         color = color[1:]
     if len(color) == 1:
@@ -75,12 +101,17 @@ def getColor(color):
     elif len(color) == 6:
         rgb = color[:2], color[2:4], color[4:]
     else:
-        raise Exception('Invalid color')
+        raise ValueError('Invalid color')
 
     rgb = tuple([int(c, 16) for c in rgb])
     return rgb
 
 def getUSDPerBTC():
+    """Get current exchange rate as a float.
+
+    Caches the exchange rate for five minutes.
+    """
+
     usd_per_btc = cache.get('usd_per_btc')
 
     if usd_per_btc is None:
@@ -94,6 +125,12 @@ def getUSDPerBTC():
     return usd_per_btc
 
 def generateImage(price_btc, color):
+    """Generate an Image object.
+
+    To try to get better looking images, the original image
+    is 4x larger and it is scaled down with antialiasing.
+    """
+
     price_str = '{0:.4f} BTC'.format(price_btc)
     w, h = int(len(price_str) * 30 + 16), 56
 
@@ -111,6 +148,10 @@ def generateImage(price_btc, color):
     return img
 
 def getImageIO(price_btc, color):
+    """Get the StringIO object containing the image.
+
+    Also cached, with a name containing the BTC price and color."""
+
     img_name = 'img_{0:f}_{1}[0]_{1}[1]_{1}[2]'.format(price_btc, color)
     img_io = cache.get(img_name)
 
