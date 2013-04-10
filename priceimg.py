@@ -34,7 +34,10 @@ cache = SimpleCache()
 @app.route('/')
 def home():
     """Serve the home page."""
-    usd_per_btc = getUSDPerBTC()
+    try:
+        usd_per_btc = getUSDPerBTC()
+    except:
+        usd_per_btc = None
     if usd_per_btc is None:
         usd_per_btc = 'Mt Gox Error'
     else:
