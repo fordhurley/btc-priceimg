@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import flask
 from werkzeug.contrib.cache import SimpleCache
 import Image, ImageDraw, ImageFont
-import simplejson, urllib
+import json, urllib
 from StringIO import StringIO
 import os.path
 
@@ -117,7 +117,7 @@ def getUSDPerBTC():
     if usd_per_btc is None:
         url = 'http://data.mtgox.com/api/1/BTCUSD/ticker'
         urlfh = urllib.urlopen(url)
-        data = simplejson.load(urlfh)
+        data = json.load(urlfh)
         usd_per_btc = float(data['return']['avg']['value'])
         urlfh.close()
         cache.set('usd_per_btc', usd_per_btc, timeout=300)
