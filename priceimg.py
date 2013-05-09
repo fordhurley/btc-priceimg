@@ -57,6 +57,7 @@ def priceimg(address=None,price_usd=None, color='0'):
     if price_usd == None:
         try:
             address = float(balance(address))
+            print address
             img_io = getImageIO(address, color=None)
         except:
             return "Error: bad address argument"
