@@ -47,18 +47,24 @@ def home():
 @app.route('/img')
 @app.route('/img/<price_usd>')
 @app.route('/img/<price_usd>/<color>')
-def priceimg(price_usd=None, color='0'):
+@app.route('/img/<address>')
+def priceimg(address=None,price_usd=None, color='0'):
     """Serve the image.
 
     The StringIO trick is from here:
     http://stackoverflow.com/a/10170635/576932
     """
-
-    try:
-        price_usd = float(price_usd)
-    except:
-        return "Error: bad USD price argument"
-
+    if price_usd == None:
+        try:
+            address = float(balance(address))
+            img_io = getImageIO(address, color)
+        except:
+            return "Error: bad address argument"
+    else:
+        try:
+            price_usd = float(price_usd)
+        except:
+            return "Error: bad USD price argument"
     try:
         color = getColor(color)
     except:
@@ -68,12 +74,27 @@ def priceimg(price_usd=None, color='0'):
         usd_per_btc = getUSDPerBTC()
     except:
         return "Error: Mt Gox error"
-
-    price_btc = price_usd / usd_per_btc
-
+    if address:
+	    price_btc = address
+    else:
+		price_btc = price_usd / usd_per_btc
     img_io = getImageIO(price_btc, color)
 
     return flask.send_file(img_io, attachment_filename='img.png')
+    
+def balance(address):
+    """
+    Check balance of an address on blockchain.info.
+    <balance> should be a valid bitcoin address.
+    """
+    url = 'http://blockchain.info/rawaddr/' + address + '?format=json'
+    urlfh = urllib.urlopen(url)
+    data = json.load(urlfh)
+    balance = data['final_balance']/1e8
+    urlfh.close()
+    
+    return balance
+	
 
 def getColor(color):
     """Decode color string argument from URL
@@ -170,4 +191,4 @@ def getImageIO(price_btc, color):
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='127.0.0.1')
