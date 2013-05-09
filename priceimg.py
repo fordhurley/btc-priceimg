@@ -58,7 +58,6 @@ def priceimg(address=None,price_usd=None, color='0'):
         try:
             address = float(balance(address))
             print address
-            img_io = getImageIO(address, color=None)
         except:
             return "Error: bad address argument"
     else:
@@ -75,11 +74,13 @@ def priceimg(address=None,price_usd=None, color='0'):
         usd_per_btc = getUSDPerBTC()
     except:
         return "Error: Mt Gox error"
-    if address:
-	    price_btc = address
+    
+    if address or address == 0.0:
+        img_io = getImageIO(address, color)
     else:
-		price_btc = price_usd / usd_per_btc
-    img_io = getImageIO(price_btc, color)
+        price_btc = price_usd / usd_per_btc
+        img_io = getImageIO(price_btc, color)
+        
 
     return flask.send_file(img_io, attachment_filename='img.png')
     
