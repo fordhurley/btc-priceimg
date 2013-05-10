@@ -47,24 +47,15 @@ def home():
 @app.route('/img')
 @app.route('/img/<price_usd>')
 @app.route('/img/<price_usd>/<color>')
-@app.route('/img/<address>')
-def priceimg(address=None,price_usd=None, color='0'):
+def priceimg(price_usd=None, color='0'):
     """Serve the image.
-
     The StringIO trick is from here:
     http://stackoverflow.com/a/10170635/576932
     """
-    if price_usd == None:
-        try:
-            address = float(balance(address))
-            print address
-        except:
-            return "Error: bad address argument"
-    else:
-        try:
-            price_usd = float(price_usd)
-        except:
-            return "Error: bad USD price argument"
+    try:
+        price_usd = float(price_usd)
+    except:
+        return "Error: bad USD price argument"
     try:
         color = getColor(color)
     except:
@@ -75,15 +66,27 @@ def priceimg(address=None,price_usd=None, color='0'):
     except:
         return "Error: Mt Gox error"
     
-    if address or address == 0.0:
-        img_io = getImageIO(address, color)
-    else:
-        price_btc = price_usd / usd_per_btc
-        img_io = getImageIO(price_btc, color)
-        
+    price_btc = price_usd / usd_per_btc
+    img_io = getImageIO(price_btc, color)     
 
     return flask.send_file(img_io, attachment_filename='img.png')
     
+@app.route('/balance/<address>')
+@app.route('/balance/<address>/<color>')
+def balimg(address=None, color='0'):
+   #Serve image with address balance
+   try:
+       address = float(balance(address))
+   except:
+       return "Error: bad address argument"
+   try:
+        color = getColor(color)
+   except:
+        return "Error: bad color argument"
+   img_io = getImageIO(address, color)
+   
+   return flask.send_file(img_io, attachment_filename='img.png')
+
 def balance(address):
     """
     Check balance of an address on blockchain.info.
