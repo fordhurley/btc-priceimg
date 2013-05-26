@@ -31,7 +31,8 @@
                 <p>Current exchange rate is: {{ usd_per_btc }}</p>
                 <p>Problems? Suggestions? <a href="https://bitcointalk.org/index.php?topic=151565">Discuss here</a>.</p>
                 <p>Source available on <a href="https://github.com/fizzisist/btc-priceimg">GitHub</a>.</p>
-                </div>
+                <p>New advanced tool allows for choice of currency (BTC or LTC for now). Read about it below.</p>
+            </div>
         </div>
         
         <div class="box">
@@ -57,6 +58,15 @@
                 <p>Which yields: <img src="{{ url_for('priceimg') }}/10.00/00f" /></p>
                 <p>You can then embed the image in your post using that URL. In BBCode, this would be:<br />
                 <code class="block">[img]{{ url_for('priceimg', _external=True) }}/10.00[/img]</code></p>
+            </div>
+        </div>
+        
+        <div class="box">
+            <div class="boxtitle">Advanced Version</div>
+            <div class="boxcontent">
+                <p>The advanced version is available to allow changing the display currency, and allow for more advanced options in the future. The URL format is of the form:<br />
+                <code class="block">{{ url_for('priceimgadv', _external=True) }}?price=&lt;price&gt;&amp;currency=&lt;currency&gt;&amp;color=&lt;color&gt;</code></p>
+                <p>"price" is the only mandatory argument, and should be the desired price in USD. The optional "currency" argument can be "BTC" or "LTC" (without quotes) and will default to "BTC". The optional "color" argument is the same as in the basic version above.</p>
             </div>
         </div>
         
