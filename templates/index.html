@@ -31,7 +31,7 @@
                 <p>Current exchange rate is: {{ usd_per_btc }}</p>
                 <p>Problems? Suggestions? <a href="https://bitcointalk.org/index.php?topic=151565">Discuss here</a>.</p>
                 <p>Source available on <a href="https://github.com/fizzisist/btc-priceimg">GitHub</a>.</p>
-                <p>New advanced tool allows for choice of currency (BTC or LTC for now). Read about it below.</p>
+                <p>A new advanced version of the tool allows for a choice of currency (BTC or LTC for now). Read about it <a href="#advanced">below.</a></p>
             </div>
         </div>
         
@@ -61,12 +61,21 @@
             </div>
         </div>
         
-        <div class="box">
+        <div class="box" id="advanced">
             <div class="boxtitle">Advanced Version</div>
             <div class="boxcontent">
                 <p>The advanced version is available to allow changing the display currency, and allow for more advanced options in the future. The URL format is of the form:<br />
                 <code class="block">{{ url_for('priceimgadv', _external=True) }}?price=&lt;price&gt;&amp;currency=&lt;currency&gt;&amp;color=&lt;color&gt;</code></p>
                 <p>"price" is the only mandatory argument, and should be the desired price in USD. The optional "currency" argument can be "BTC" or "LTC" (without quotes) and will default to "BTC". The optional "color" argument is the same as in the basic version above.</p>
+            </div>
+        </div>
+        
+        <div class="box" id="balance">
+            <div class="boxtitle">Balance Checker</div>
+            <div class="boxcontent">
+                <p>An additional tool allows you to check the balance of any bitcoin address using the API from <a href="http://blockchain.info" target="_blank">blockchain.info</a>. Simply build a URL of the form:<br />
+                <code class="block">{{ url_for('balimg', _external=True) }}/&lt;address&gt;/&lt;color&gt;</code></p>
+                <p>As in the basic version above, the color argument is optional and accepts html-like hex codes.</p>
             </div>
         </div>
         
