@@ -123,7 +123,8 @@ def priceimgadv():
     img_io = getImageIO(price, currency, color)
 
     return flask.send_file(img_io, attachment_filename='img.png')
-    
+
+@app.route('/balance')
 @app.route('/balance/<address>')
 @app.route('/balance/<address>/<color>')
 def balimg(address=None, color='0'):
