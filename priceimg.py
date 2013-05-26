@@ -129,7 +129,7 @@ def priceimgadv():
 def balimg(address=None, color='0'):
    """Serve image with address balance."""
    try:
-       address = float(balance(address))
+       address = float(getBalance(address))
    except:
        return "Error: bad address argument"
    try:
@@ -140,7 +140,7 @@ def balimg(address=None, color='0'):
    
    return flask.send_file(img_io, attachment_filename='img.png')
 
-def balance(address):
+def getBalance(address):
     """
     Check balance of an address on blockchain.info.
     <address> should be a valid bitcoin address.
