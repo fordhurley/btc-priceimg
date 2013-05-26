@@ -127,7 +127,7 @@ def priceimgadv():
 @app.route('/balance/<address>')
 @app.route('/balance/<address>/<color>')
 def balimg(address=None, color='0'):
-   #Serve image with address balance
+   """Serve image with address balance."""
    try:
        address = float(balance(address))
    except:
@@ -136,21 +136,20 @@ def balimg(address=None, color='0'):
         color = getColor(color)
    except:
         return "Error: bad color argument"
-   img_io = getImageIO(address, color)
+   img_io = getImageIO(address, 'BTC', color)
    
    return flask.send_file(img_io, attachment_filename='img.png')
 
 def balance(address):
     """
     Check balance of an address on blockchain.info.
-    <balance> should be a valid bitcoin address.
+    <address> should be a valid bitcoin address.
     """
     url = 'http://blockchain.info/rawaddr/' + address + '?format=json'
     urlfh = urllib.urlopen(url)
     data = json.load(urlfh)
     balance = data['final_balance']/1e8
     urlfh.close()
-    
     return balance
 
 def getColor(color):
@@ -224,7 +223,7 @@ def getUSDPerLTC():
 def generateImage(price, currency, color):
     """Generate an Image object.
     
-    price is a float, and cuurency is a three letter string
+    price is a float, and currency is a three letter string
     to be shown after the price (e.g., 'BTC').
     
     To try to get better looking images, the original image
