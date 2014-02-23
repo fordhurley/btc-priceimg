@@ -19,23 +19,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import flask
-from werkzeug.contrib.cache import SimpleCache
-import Image, ImageDraw, ImageFont
-import json, urllib
+import json
+import urllib
 from StringIO import StringIO
 import os.path
+
+import flask
+from werkzeug.contrib.cache import SimpleCache
+import Image
+import ImageDraw
+import ImageFont
+
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'verdana.ttf')
 
 app = flask.Flask(__name__)
 cache = SimpleCache()
 
+
 @app.route('/')
 def home():
     """Serve the home page."""
     try:
-        usd_per_btc = getUSDPerBTC()
+        usd_per_btc = get_usd_per_btc()
     except:
         usd_per_btc = None
     if usd_per_btc is None:
@@ -43,15 +49,16 @@ def home():
     else:
         usd_per_btc = '${0} / BTC'.format(usd_per_btc)
     try:
-        usd_per_ltc = getUSDPerLTC()
+        usd_per_ltc = get_usd_per_ltc()
     except:
         usd_per_ltc = None
     if usd_per_ltc is None:
         usd_per_ltc = 'BTC-e Error'
     else:
         usd_per_ltc = '${0} / LTC'.format(usd_per_ltc)
-    
+
     return flask.render_template('index.html', usd_per_btc=usd_per_btc, usd_per_ltc=usd_per_ltc)
+
 
 @app.route('/img')
 @app.route('/img/<price_usd>')
@@ -65,25 +72,26 @@ def priceimg(price_usd=None, color='0'):
 
     try:
         price_usd = float(price_usd)
-    except:
+    except ValueError:
         return "Error: bad USD price argument"
 
     try:
-        color = getColor(color)
-    except:
+        color = get_color(color)
+    except ValueError:
         return "Error: bad color argument"
 
     try:
-        usd_per_btc = getUSDPerBTC()
-    except:
+        usd_per_btc = get_usd_per_btc()
+    except Exception:
         return "Error: Mt Gox error"
 
     price_btc = price_usd / usd_per_btc
 
-    img_io = getImageIO(price_btc, 'BTC', color)
+    img_io = get_image_io(price_btc, 'BTC', color)
 
     return flask.send_file(img_io, attachment_filename='img.png')
-    
+
+
 @app.route('/advimg')
 def priceimgadv():
     """Serve the image, with advanced options.
@@ -94,25 +102,25 @@ def priceimgadv():
     price_usd = flask.request.args.get('price')
     currency = flask.request.args.get('currency', 'BTC').upper()
     color = flask.request.args.get('color', '0')
-    
+
     try:
         price_usd = float(price_usd)
     except:
         return "Error: bad USD price argument"
 
     try:
-        color = getColor(color)
+        color = get_color(color)
     except:
         return "Error: bad color argument"
-    
+
     if currency == 'BTC':
         try:
-            usd_per_coin = getUSDPerBTC()
+            usd_per_coin = get_usd_per_btc()
         except:
             return "Error: Mt Gox error"
     elif currency == 'LTC':
         try:
-            usd_per_coin = getUSDPerLTC()
+            usd_per_coin = get_usd_per_ltc()
         except:
             return 'Error: BTC-e error'
     else:
@@ -120,28 +128,30 @@ def priceimgadv():
 
     price = price_usd / usd_per_coin
 
-    img_io = getImageIO(price, currency, color)
+    img_io = get_image_io(price, currency, color)
 
     return flask.send_file(img_io, attachment_filename='img.png')
+
 
 @app.route('/balance')
 @app.route('/balance/<address>')
 @app.route('/balance/<address>/<color>')
 def balimg(address=None, color='0'):
-   """Serve image with address balance."""
-   try:
-       address = float(getBalance(address))
-   except:
-       return "Error: bad address argument"
-   try:
-        color = getColor(color)
-   except:
+    """Serve image with address balance."""
+    try:
+        address = float(get_balance(address))
+    except:
+        return "Error: bad address argument"
+    try:
+        color = get_color(color)
+    except:
         return "Error: bad color argument"
-   img_io = getImageIO(address, 'BTC', color)
-   
-   return flask.send_file(img_io, attachment_filename='img.png')
+    img_io = get_image_io(address, 'BTC', color)
 
-def getBalance(address):
+    return flask.send_file(img_io, attachment_filename='img.png')
+
+
+def get_balance(address):
     """
     Check balance of an address on blockchain.info.
     <address> should be a valid bitcoin address.
@@ -149,11 +159,12 @@ def getBalance(address):
     url = 'http://blockchain.info/rawaddr/' + address + '?format=json'
     urlfh = urllib.urlopen(url)
     data = json.load(urlfh)
-    balance = data['final_balance']/1e8
+    balance = data['final_balance'] / 1e8
     urlfh.close()
     return balance
 
-def getColor(color):
+
+def get_color(color):
     """Decode color string argument from URL
 
     Colors can be passed as either a full HTML code (#aac24e),
@@ -163,22 +174,22 @@ def getColor(color):
 
     Returns a RGB tuple (values 0-255).
 
-    >>> getColor('#aac24e')
+    >>> get_color('#aac24e')
     (170, 194, 78)
 
-    >>> getColor('c00')
+    >>> get_color('c00')
     (204, 0, 0)
 
-    >>> getColor('5')
+    >>> get_color('5')
     (85, 85, 85)
     """
 
     if color[0] == '#':
         color = color[1:]
     if len(color) == 1:
-        rgb = color*2, color*2, color*2
+        rgb = color * 2, color * 2, color * 2
     elif len(color) == 3:
-        rgb = color[0]*2, color[1]*2, color[2]*2
+        rgb = color[0] * 2, color[1] * 2, color[2] * 2
     elif len(color) == 6:
         rgb = color[:2], color[2:4], color[4:]
     else:
@@ -187,7 +198,8 @@ def getColor(color):
     rgb = tuple([int(c, 16) for c in rgb])
     return rgb
 
-def getUSDPerBTC():
+
+def get_usd_per_btc():
     """Get current exchange rate as a float.
 
     Caches the exchange rate for five minutes.
@@ -204,7 +216,8 @@ def getUSDPerBTC():
 
     return usd_per_btc
 
-def getUSDPerLTC():
+
+def get_usd_per_ltc():
     """Get current exchange rate as a float.
 
     Caches the exchange rate for five minutes.
@@ -221,7 +234,8 @@ def getUSDPerLTC():
 
     return usd_per_ltc
 
-def generateImage(price, currency, color):
+
+def generate_image(price, currency, color):
     """Generate an Image object.
     
     price is a float, and currency is a three letter string
@@ -243,11 +257,12 @@ def generateImage(price, currency, color):
         font = ImageFont.load_default()
 
     draw.text((0, 0), price_str, font=font, fill=color)
-    img = img.resize((w/4, h/4), Image.ANTIALIAS)
+    img = img.resize((w / 4, h / 4), Image.ANTIALIAS)
 
     return img
 
-def getImageIO(price, currency, color):
+
+def get_image_io(price, currency, color):
     """Get the StringIO object containing the image.
 
     Also cached, with a name containing the BTC price and color."""
@@ -256,7 +271,7 @@ def getImageIO(price, currency, color):
     img_io = cache.get(img_name)
 
     if img_io is None:
-        img = generateImage(price, currency, color)
+        img = generate_image(price, currency, color)
         img_io = StringIO()
         img.save(img_io, 'PNG', quality=90)
         img_io.seek(0)
@@ -264,6 +279,7 @@ def getImageIO(price, currency, color):
 
     img_io.seek(0)
     return img_io
+
 
 if __name__ == '__main__':
     app.debug = True
