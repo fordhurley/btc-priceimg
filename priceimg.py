@@ -26,9 +26,7 @@ import os.path
 
 import flask
 from werkzeug.contrib.cache import SimpleCache
-import Image
-import ImageDraw
-import ImageFont
+from PIL import Image, ImageDraw, ImageFont
 
 
 FONT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'verdana.ttf')
