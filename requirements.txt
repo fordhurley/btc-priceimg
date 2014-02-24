@@ -3,6 +3,10 @@ Jinja2==2.7.2
 MarkupSafe==0.18
 Pillow==2.3.0
 Werkzeug==0.9.4
+ecdsa==0.10
+gunicorn==18.0
 itsdangerous==0.23
+paramiko==1.12.2
+pycrypto==2.6.1
 requests==2.2.1
 wsgiref==0.1.2
