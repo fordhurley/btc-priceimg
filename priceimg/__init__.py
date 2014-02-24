@@ -1,7 +1,5 @@
 """
-priceimg.py
-
-Copyright (C) 2013 Ford Hurley
+Copyright (C) 2014 Ford Hurley
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
