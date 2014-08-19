@@ -9,6 +9,13 @@ def test():
         local('nosetests')
 
 
+def serve():
+    """
+    Run the development server.
+    """
+    local('./serve.py')
+
+
 def deploy():
     """
     Deploy app to Heroku.
