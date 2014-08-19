@@ -85,7 +85,7 @@ def get_usd_per_btc():
     usd_per_btc = cache.get('usd_per_btc')
 
     if usd_per_btc is None:
-        url = 'https://api.bitcoinaverage.com/ticker/USD/'
+        url = 'https://api.bitcoinaverage.com/ticker/global/USD/'
         r = requests.get(url)
         data = r.json()
         usd_per_btc = float(data['24h_avg'])
