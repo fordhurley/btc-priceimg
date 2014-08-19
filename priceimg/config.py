@@ -15,23 +15,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import os
+import sys
 
 from priceimg import app
 import util
 
-try:
-    ENV = os.environ['FLASK_ENV']
-except KeyError:
-    ENV = 'dev'
+FLASK_ENV = os.environ.get('FLASK_ENV', 'dev')
 
-CONFIG_FILE = os.path.abspath(os.path.join('config', '%s.cfg' % ENV))
-
+CONFIG_FILE = os.path.abspath(os.path.join('config', '%s.cfg' % FLASK_ENV))
 app.config.from_pyfile(CONFIG_FILE)
 
-ENV_VARS = [
-    'FONT_URL'
-]
-for var in ENV_VARS:
-    app.config[var] = os.environ.get(var)
+REQUIRED_ENV_VARS = ['FONT_URL']
+for var in REQUIRED_ENV_VARS:
+    try:
+        app.config[var] = os.environ[var]
+    except KeyError:
+        print 'Missing required environment variable:', var
+        sys.exit(1)
 
 app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'])
