@@ -1,4 +1,6 @@
 body {
+    font-size: 16px;
+    font-family: 'Raleway', verdana, arial, sans-serif;
     background-color: #fff;
     text-align: center;
 }
@@ -12,21 +14,22 @@ form {
     padding: 0;
 }
 
-p, li, div, span {
-    font-family: monospace, verdana, arial, sans-serif;
-    text-decoration: none;
-}
-
 small {
     font-size: 10px;
 }
 
 code {
+    font-size: 14px;
+    font-family: 'Inconsolata', monospace;
     background-color: #eee;
+    padding: 3px;
 }
 
 code.block {
-    margin-left: 10px;
+    font-size: 15px;
+    margin-top: 3px;
+    padding: 5px 10px;
+    display: block;
 }
 
 .pre_container {

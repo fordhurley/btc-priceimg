@@ -1,6 +1,8 @@
 <!doctype html>
 <head>
     <title>Bitcoin price image generator</title>
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -44,13 +46,12 @@
 
             <p>Current exchange rate is: {{ usd_per_btc }}</p>
 
-            <p>Problems? Suggestions? <a href="https://bitcointalk.org/index.php?topic=151565">Discuss
-                here</a>.</p>
+            <p>Problems? Suggestions? <a href="https://github.com/fordhurley/btc-priceimg/issues">Open an issue</a>.</p>
 
             <p>Source available on <a href="https://github.com/fordhurley/btc-priceimg">GitHub</a>.
             </p>
 
-            <p>A new advanced version of the tool allows for a choice of currency (BTC or LTC for
+            <p>The advanced version of the tool allows for a choice of currency (BTC or LTC for
                 now). Read about it <a href="#advanced">below.</a></p>
         </div>
     </div>
@@ -108,10 +109,13 @@
                 <code class="block">{{ url_for('priceimgadv', _external=True) }}?price=&lt;price&gt;&amp;currency=&lt;currency&gt;&amp;color=&lt;color&gt;</code>
             </p>
 
-            <p>"price" is the only mandatory argument, and should be the desired price in USD. The
-                optional "currency" argument can be "BTC" or "LTC" (without quotes) and will default
-                to "BTC". The optional "color" argument is the same as in the basic version
-                above.</p>
+            <p>Arguments:</p>
+                <ul>
+                    <li><code>price</code> the desired price in USD (required) </li>
+                    <li><code>currency</code> should be "BTC" or "LTC" (without quotes). Defaults
+                to "BTC".</li>
+                    <li><code>color</code> same as in the basic version above.</li>
+                </ul>
         </div>
     </div>
 
