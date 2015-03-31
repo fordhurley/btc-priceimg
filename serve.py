@@ -21,7 +21,7 @@ def get_env(path):
             if re.search(r'^\s#', line):
                 continue
             key, value = line.split('=', 1)
-            env[key] = value
+            env[key] = value.strip()
 
     return env
 
@@ -31,4 +31,4 @@ if __name__ == '__main__':
     os.environ.update(get_env('.env'))
 
     from priceimg import app
-    app.run(debug=True, port=5002)
+    app.run(host='0.0.0.0', debug=True, port=5002)
