@@ -33,4 +33,4 @@ for var in REQUIRED_ENV_VARS:
         print 'Missing required environment variable:', var
         sys.exit(1)
 
-app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'])
+app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'], '.ttf')

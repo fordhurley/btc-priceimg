@@ -17,14 +17,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import requests
 from StringIO import StringIO
 import tempfile
-
-from PIL import Image, ImageDraw, ImageFont
+import subprocess
 
 from priceimg import app, cache
 
 
-def download_asset(url):
-    with tempfile.NamedTemporaryFile(delete=False) as f:
+def download_asset(url, extension=''):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as f:
         r = requests.get(url)
         f.write(r.content)
         return f.name
@@ -123,18 +122,37 @@ def generate_image(price, currency, color):
     """
 
     price_str = '{0:.4f} {1}'.format(price, currency)
-    w, h = int(len(price_str) * 30 + 16), 56
+    w = int(len(price_str) * 30 + 16)
+    h = 30
 
-    img = Image.new('RGBA', (w, h), (255, 255, 255, 0))
+    cmd = ['convert']
 
-    draw = ImageDraw.Draw(img)
-    try:
-        font = ImageFont.truetype(app.config['FONT_PATH'], 50)
-    except:
-        font = ImageFont.load_default()
+    cmd.append('-size')
+    cmd.append('%dx%d' % (w, h))
 
-    draw.text((0, 0), price_str, font=font, fill=color)
-    img = img.resize((w / 4, h / 4), Image.ANTIALIAS)
+    cmd.append('xc:none')
+
+    cmd.append('-font')
+    cmd.append(app.config['FONT_PATH'])
+
+    cmd.append('-pointsize')
+    cmd.append('14')
+
+    cmd.append('-gravity')
+    cmd.append('center')
+
+    cmd.append('-fill')
+    cmd.append('rgb(%d,%d,%d)' % color)
+
+    cmd.append('-draw')
+    cmd.append('text 0,0 "%s"' % price_str)
+
+    cmd.append('-trim')
+    cmd.append('+repage')
+
+    cmd.append('png:-')
+
+    img = subprocess.check_output(cmd)
 
     return img
 
@@ -150,7 +168,7 @@ def get_image_io(price, currency, color):
     if img_io is None:
         img = generate_image(price, currency, color)
         img_io = StringIO()
-        img.save(img_io, 'PNG')
+        img_io.write(img)
         img_io.seek(0)
         cache.set(img_name, img_io, timeout=300)
 

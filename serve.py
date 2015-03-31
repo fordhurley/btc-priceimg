@@ -21,7 +21,7 @@ def get_env(path):
             if re.search(r'^\s#', line):
                 continue
             key, value = line.split('=', 1)
-            env[key] = value
+            env[key] = value.strip()
 
     return env
 

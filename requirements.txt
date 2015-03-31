@@ -2,7 +2,6 @@ Fabric==1.8.2
 Flask==0.10.1
 Jinja2==2.7.2
 MarkupSafe==0.18
-Pillow==2.3.0
 Werkzeug==0.9.4
 ecdsa==0.10
 gunicorn==18.0
