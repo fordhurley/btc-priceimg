@@ -31,4 +31,4 @@ if __name__ == '__main__':
     os.environ.update(get_env('.env'))
 
     from priceimg import app
-    app.run(debug=True, port=5002)
+    app.run(host='0.0.0.0', debug=True, port=5002)
