@@ -1,6 +1,6 @@
 body {
     font-size: 16px;
-    font-family: 'Open Sans', verdana, arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
     background-color: #fff;
     text-align: center;
 }
@@ -19,16 +19,17 @@ small {
 }
 
 code {
-    font-size: 14px;
-    font-family: 'Inconsolata', monospace;
+    font-size: 13px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     background-color: #eee;
+    color: #333;
     padding: 2px;
 }
 
 code.block {
-    font-size: 15px;
-    margin-top: 3px;
-    padding: 5px 10px;
+    font-size: 13px;
+    margin-top: 6px;
+    padding: 9px 10px 8px;
     display: block;
 }
 

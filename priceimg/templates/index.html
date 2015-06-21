@@ -1,8 +1,6 @@
 <!doctype html>
 <head>
     <title>Bitcoin price image generator</title>
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -21,10 +19,6 @@
 </head>
 
 <body>
-<a href="https://github.com/fordhurley/btc-priceimg"><img
-        style="position: absolute; top: 0; right: 0; border: 0;"
-        src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"
-        alt="Fork me on GitHub"></a>
 
 <div class="pre_container">
     <div id="sitetitle">
@@ -69,9 +63,9 @@
                 <code class="block">{{ url_for('priceimg', _external=True) }}/&lt;price_in_usd&gt;/&lt;color&gt;</code>
             </p>
 
-            <p>The color code should be an html-like hex code (for white: 'ffffff' or 'fff' or
-                simply 'f'). See <a href="http://www.w3schools.com/html/html_colors.asp"
-                                    target="_blank">W3Schools website</a> for color examples. The
+            <p>The color code should be an html-like hex code (for white: <code>ffffff</code> or <code>fff</code> or
+                simply <code>f</code>). See <a href="https://en.wikipedia.org/wiki/Web_colors"
+                                    target="_blank">wikipedia</a> for more info. The
                 background of the image will be transparent.</p>
         </div>
     </div>
@@ -80,16 +74,14 @@
         <div class="boxtitle">Example</div>
         <div class="boxcontent">
             <p>Say you want to sell an item for $10. You can generate an image using:<br/>
-                <code class="block"><a
-                        href="{{ url_for('priceimg', _external=True) }}/10.00">{{ url_for('priceimg', _external=True) }}/10.00</a></code>
+                <code class="block">{{ url_for('priceimg', _external=True) }}/10.00</code>
             </p>
 
             <p>Which will yield the image: <img src="{{ url_for('priceimg') }}/10.00"/></p>
 
             <p>If you want to change the color (to more closely match the text in your forum post,
                 for example), use: <br/>
-                <code class="block"><a
-                        href="{{ url_for('priceimg', _external=True) }}/10.00/00f">{{ url_for('priceimg', _external=True) }}/10.00/00f</a></code>
+                <code class="block">{{ url_for('priceimg', _external=True) }}/10.00/00f</code>
             </p>
 
             <p>Which yields: <img src="{{ url_for('priceimg') }}/10.00/00f"/></p>
@@ -105,7 +97,7 @@
         <div class="boxtitle">Advanced Version</div>
         <div class="boxcontent">
             <p>The advanced version is available to allow changing the display currency, and allow
-                for more advanced options in the future. The URL format is of the form:<br/>
+                for fancier options in the future. The URL format is of the form:<br/>
                 <code class="block">{{ url_for('priceimgadv', _external=True) }}?price=&lt;price&gt;&amp;currency=&lt;currency&gt;&amp;color=&lt;color&gt;</code>
             </p>
 
@@ -137,6 +129,7 @@
 
 <div id="footer">
     by <a href="http://fordhurley.com">Ford Hurley</a> |
-    Tips? Why not! <a href="bitcoin:122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm?label=btc-priceimg">122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm</a>
+    Tips? Why not! <a href="bitcoin:122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm?label=btc-priceimg">122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm</a> |
+    <a href="https://github.com/fordhurley/btc-priceimg">Github</a>
 </div>
 </body>
