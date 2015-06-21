@@ -25,12 +25,6 @@ FLASK_ENV = os.environ.get('FLASK_ENV', 'dev')
 CONFIG_FILE = os.path.abspath(os.path.join('config', '%s.cfg' % FLASK_ENV))
 app.config.from_pyfile(CONFIG_FILE)
 
-REQUIRED_ENV_VARS = ['FONT_URL']
-for var in REQUIRED_ENV_VARS:
-    try:
-        app.config[var] = os.environ[var]
-    except KeyError:
-        print 'Missing required environment variable:', var
-        sys.exit(1)
-
-app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'], '.ttf')
+app.config['FONT_URL'] = os.environ.get('FONT_URL')
+if app.config['FONT_URL']:
+    app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'], '.ttf')
