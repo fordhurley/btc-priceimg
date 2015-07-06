@@ -15,26 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from flask import send_file, request, render_template
+import misaka
 
-from priceimg import app
+from priceimg import app, cache
 import util
+
+_body_html = None
 
 @app.route('/')
 def home():
     """Serve the home page."""
-    try:
-        btc_per_usd = util.get_exchange_rate('USD', 'BTC')
-        usd_per_btc = '$%f / BTC' % (1.0 / btc_per_usd)
-    except ValueError:
-        usd_per_btc = 'BitcoinAverage Error'
-
-    try:
-        ltc_per_usd = util.get_exchange_rate('USD', 'LTC')
-        usd_per_ltc = '$%f / LTC' % (1.0 / ltc_per_usd)
-    except ValueError:
-        usd_per_ltc = 'BTC-e Error'
-
-    return render_template('index.html', usd_per_btc=usd_per_btc, usd_per_ltc=usd_per_ltc)
+    if _body_html is None:
+        with open('README.md') as f:
+            global _body_html
+            _body_html = misaka.html(f.read())
+    return render_template('index.html', body=_body_html)
 
 
 @app.route('/img')
