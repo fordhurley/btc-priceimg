@@ -41,7 +41,29 @@ def get_balance(address):
     return balance
 
 
-def get_color(color):
+def parse_price(s):
+    """Parses a price string of the form "1.5 USD".
+
+    >>> parse_price('1.5 USD')
+    (1.5, 'USD')
+
+    >>> parse_price('1')
+    (1.0, 'USD')
+
+    >>> parse_price('0.1USD')
+    (0.1, 'USD')
+
+    >>> parse_price('1 GBP')
+    Traceback (most recent call last):
+        ...
+    ValueError: invalid literal for float(): 1 GBP
+    """
+    if s.endswith('USD'):
+        s = s.rstrip('USD').strip()
+    return float(s), 'USD'
+
+
+def parse_color(color):
     """Decode color string argument from URL
 
     Colors can be passed as either a full HTML code (#aac24e),
@@ -51,13 +73,13 @@ def get_color(color):
 
     Returns a RGB tuple (values 0-255).
 
-    >>> get_color('#aac24e')
+    >>> parse_color('#aac24e')
     (170, 194, 78)
 
-    >>> get_color('c00')
+    >>> parse_color('c00')
     (204, 0, 0)
 
-    >>> get_color('5')
+    >>> parse_color('5')
     (85, 85, 85)
     """
 
@@ -76,39 +98,42 @@ def get_color(color):
     return rgb
 
 
-def get_usd_per_btc():
-    """Get current exchange rate as a float.
+def get_exchange_rate(input_currency, output_currency):
+    """Gets the exchange rate as output_currency per input_currency.
 
-    Caches the exchange rate for five minutes.
+    Caches the result for five minutes.
     """
-    usd_per_btc = cache.get('usd_per_btc')
+    input_currency = input_currency.lower()
+    output_currency = output_currency.lower()
+    key = '%s_per_%s' % (output_currency, input_currency)
+    rate = cache.get(key)
+    if rate is None:
+        rate = _exchange_lookup[key]()
+        cache.set(key, rate, timeout=300)
+        # TODO: cache the inverse while we have it?
+    return rate
 
-    if usd_per_btc is None:
-        url = 'https://api.bitcoinaverage.com/ticker/global/USD/'
-        r = requests.get(url)
-        data = r.json()
-        usd_per_btc = float(data['24h_avg'])
-        cache.set('usd_per_btc', usd_per_btc, timeout=300)
 
-    return usd_per_btc
+def get_btc_per_usd():
+    url = 'https://api.bitcoinaverage.com/ticker/global/USD/'
+    r = requests.get(url)
+    data = r.json()
+    usd_per_btc = float(data['24h_avg'])
+    return 1.0 / usd_per_btc
 
 
-def get_usd_per_ltc():
-    """Get current exchange rate as a float.
+def get_ltc_per_usd():
+    url = 'https://btc-e.com/api/2/ltc_usd/ticker'
+    r = requests.get(url)
+    data = r.json()
+    usd_per_ltc = float(data['ticker']['avg'])
+    return 1.0 / usd_per_ltc
 
-    Caches the exchange rate for five minutes.
-    """
-    usd_per_ltc = cache.get('usd_per_ltc')
 
-    if usd_per_ltc is None:
-        url = 'https://btc-e.com/api/2/ltc_usd/ticker'
-        r = requests.get(url)
-        data = r.json()
-        usd_per_ltc = float(data['ticker']['avg'])
-        urlfh.close()
-        cache.set('usd_per_ltc', usd_per_ltc, timeout=300)
-
-    return usd_per_ltc
+_exchange_lookup = {
+    'btc_per_usd': get_btc_per_usd,
+    'ltc_per_usd': get_ltc_per_usd,
+}
 
 
 def generate_image(price, currency, color):
