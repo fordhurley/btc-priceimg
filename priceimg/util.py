@@ -18,6 +18,7 @@ import requests
 from StringIO import StringIO
 import tempfile
 import subprocess
+import re
 
 from priceimg import app, cache
 
@@ -41,6 +42,8 @@ def get_balance(address):
     return balance
 
 
+price_regex = re.compile(r'([0-9]*\.?[0-9]+)\s*(\w+)?')
+
 def parse_price(s):
     """Parses a price string of the form "1.5 USD".
 
@@ -54,13 +57,15 @@ def parse_price(s):
     (0.1, 'USD')
 
     >>> parse_price('1 GBP')
-    Traceback (most recent call last):
-        ...
-    ValueError: invalid literal for float(): 1 GBP
+    (1.0, 'GBP')
     """
-    if s.endswith('USD'):
-        s = s.rstrip('USD').strip()
-    return float(s), 'USD'
+    s = s.strip()
+    m = price_regex.match(s)
+    price, currency = m.groups()
+    price = float(price)
+    if currency is None:
+        currency = 'USD'
+    return price, currency
 
 
 def parse_color(color):
@@ -108,18 +113,25 @@ def get_exchange_rate(input_currency, output_currency):
     key = '%s_per_%s' % (output_currency, input_currency)
     rate = cache.get(key)
     if rate is None:
-        rate = _exchange_lookup[key]()
+        if output_currency == 'btc':
+            rate = get_btc_rate(input_currency)
+        elif output_currency == 'ltc' and input_currency == 'usd':
+            rate = get_ltc_per_usd()
+        else:
+            raise ValueError('unsupported currency pair')
         cache.set(key, rate, timeout=300)
         # TODO: cache the inverse while we have it?
     return rate
 
 
-def get_btc_per_usd():
-    url = 'https://api.bitcoinaverage.com/ticker/global/USD/'
+def get_btc_rate(currency):
+    currency = currency.upper()
+    url = 'https://api.bitcoinaverage.com/ticker/global/%s/' % currency
     r = requests.get(url)
+    r.raise_for_status
     data = r.json()
-    usd_per_btc = float(data['24h_avg'])
-    return 1.0 / usd_per_btc
+    per_btc = float(data['24h_avg'])
+    return 1.0 / per_btc
 
 
 def get_ltc_per_usd():
@@ -128,12 +140,6 @@ def get_ltc_per_usd():
     data = r.json()
     usd_per_ltc = float(data['ticker']['avg'])
     return 1.0 / usd_per_ltc
-
-
-_exchange_lookup = {
-    'btc_per_usd': get_btc_per_usd,
-    'ltc_per_usd': get_ltc_per_usd,
-}
 
 
 def generate_image(price, currency, color):
