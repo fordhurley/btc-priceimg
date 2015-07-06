@@ -1,8 +1,10 @@
 /* Based on https://github.com/sindresorhus/github-markdown-css */
 
 body {
-  width: 700px;
-  margin: 2em auto;
+  max-width: 700px;
+  margin: auto;
+  padding: 1em;
+
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
