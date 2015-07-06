@@ -18,6 +18,7 @@ import requests
 from StringIO import StringIO
 import tempfile
 import subprocess
+import re
 
 from priceimg import app, cache
 
@@ -41,7 +42,33 @@ def get_balance(address):
     return balance
 
 
-def get_color(color):
+price_regex = re.compile(r'([0-9]*\.?[0-9]+)\s*(\w+)?')
+
+def parse_price(s):
+    """Parses a price string of the form "1.5 USD".
+
+    >>> parse_price('1.5 USD')
+    (1.5, 'USD')
+
+    >>> parse_price('1')
+    (1.0, 'USD')
+
+    >>> parse_price('0.1USD')
+    (0.1, 'USD')
+
+    >>> parse_price('1 GBP')
+    (1.0, 'GBP')
+    """
+    s = s.strip()
+    m = price_regex.match(s)
+    price, currency = m.groups()
+    price = float(price)
+    if currency is None:
+        currency = 'USD'
+    return price, currency
+
+
+def parse_color(color):
     """Decode color string argument from URL
 
     Colors can be passed as either a full HTML code (#aac24e),
@@ -51,13 +78,13 @@ def get_color(color):
 
     Returns a RGB tuple (values 0-255).
 
-    >>> get_color('#aac24e')
+    >>> parse_color('#aac24e')
     (170, 194, 78)
 
-    >>> get_color('c00')
+    >>> parse_color('c00')
     (204, 0, 0)
 
-    >>> get_color('5')
+    >>> parse_color('5')
     (85, 85, 85)
     """
 
@@ -76,39 +103,43 @@ def get_color(color):
     return rgb
 
 
-def get_usd_per_btc():
-    """Get current exchange rate as a float.
+def get_exchange_rate(input_currency, output_currency):
+    """Gets the exchange rate as output_currency per input_currency.
 
-    Caches the exchange rate for five minutes.
+    Caches the result for five minutes.
     """
-    usd_per_btc = cache.get('usd_per_btc')
+    input_currency = input_currency.lower()
+    output_currency = output_currency.lower()
+    key = '%s_per_%s' % (output_currency, input_currency)
+    rate = cache.get(key)
+    if rate is None:
+        if output_currency == 'btc':
+            rate = get_btc_rate(input_currency)
+        elif output_currency == 'ltc' and input_currency == 'usd':
+            rate = get_ltc_per_usd()
+        else:
+            raise ValueError('unsupported currency pair')
+        cache.set(key, rate, timeout=300)
+        # TODO: cache the inverse while we have it?
+    return rate
 
-    if usd_per_btc is None:
-        url = 'https://api.bitcoinaverage.com/ticker/global/USD/'
-        r = requests.get(url)
-        data = r.json()
-        usd_per_btc = float(data['24h_avg'])
-        cache.set('usd_per_btc', usd_per_btc, timeout=300)
 
-    return usd_per_btc
+def get_btc_rate(currency):
+    currency = currency.upper()
+    url = 'https://api.bitcoinaverage.com/ticker/global/%s/' % currency
+    r = requests.get(url)
+    r.raise_for_status
+    data = r.json()
+    per_btc = float(data['24h_avg'])
+    return 1.0 / per_btc
 
 
-def get_usd_per_ltc():
-    """Get current exchange rate as a float.
-
-    Caches the exchange rate for five minutes.
-    """
-    usd_per_ltc = cache.get('usd_per_ltc')
-
-    if usd_per_ltc is None:
-        url = 'https://btc-e.com/api/2/ltc_usd/ticker'
-        r = requests.get(url)
-        data = r.json()
-        usd_per_ltc = float(data['ticker']['avg'])
-        urlfh.close()
-        cache.set('usd_per_ltc', usd_per_ltc, timeout=300)
-
-    return usd_per_ltc
+def get_ltc_per_usd():
+    url = 'https://btc-e.com/api/2/ltc_usd/ticker'
+    r = requests.get(url)
+    data = r.json()
+    usd_per_ltc = float(data['ticker']['avg'])
+    return 1.0 / usd_per_ltc
 
 
 def generate_image(price, currency, color):

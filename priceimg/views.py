@@ -15,31 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 from flask import send_file, request, render_template
+import misaka
 
-from priceimg import app
+from priceimg import app, cache
 import util
+
+_body_html = None
 
 @app.route('/')
 def home():
     """Serve the home page."""
-    try:
-        usd_per_btc = util.get_usd_per_btc()
-    except:
-        usd_per_btc = None
-    if usd_per_btc is None:
-        usd_per_btc = 'Mt Gox Error'
-    else:
-        usd_per_btc = '${0} / BTC'.format(usd_per_btc)
-    try:
-        usd_per_ltc = util.get_usd_per_ltc()
-    except:
-        usd_per_ltc = None
-    if usd_per_ltc is None:
-        usd_per_ltc = 'BTC-e Error'
-    else:
-        usd_per_ltc = '${0} / LTC'.format(usd_per_ltc)
-
-    return render_template('index.html', usd_per_btc=usd_per_btc, usd_per_ltc=usd_per_ltc)
+    if _body_html is None:
+        with open('README.md') as f:
+            global _body_html
+            _body_html = misaka.html(f.read())
+    return render_template('index.html', body=_body_html)
 
 
 @app.route('/img')
@@ -51,23 +41,22 @@ def priceimg(price_usd=None, color='0'):
     The StringIO trick is from here:
     http://stackoverflow.com/a/10170635/576932
     """
-
     try:
         price_usd = float(price_usd)
     except ValueError:
         return "Error: bad USD price argument"
 
     try:
-        color = util.get_color(color)
+        color = util.parse_color(color)
     except ValueError:
         return "Error: bad color argument"
 
     try:
-        usd_per_btc = util.get_usd_per_btc()
+        btc_per_usd = util.get_exchange_rate('USD', 'BTC')
     except Exception:
-        return "Error: Mt Gox error"
+        return "Error: exchange rate error"
 
-    price_btc = price_usd / usd_per_btc
+    price_btc = price_usd * btc_per_usd
 
     img_io = util.get_image_io(price_btc, 'BTC', color)
 
@@ -81,36 +70,30 @@ def priceimgadv():
     The StringIO trick is from here:
     http://stackoverflow.com/a/10170635/576932
     """
-    price_usd = request.args.get('price')
-    currency = request.args.get('currency', 'BTC').upper()
-    color = request.args.get('color', '0')
+    price_string = request.args.get('price')
+    output_currency = request.args.get('currency', 'BTC').upper()
+    color_string = request.args.get('color', '0')
 
     try:
-        price_usd = float(price_usd)
-    except:
-        return "Error: bad USD price argument"
+        price, input_currency = util.parse_price(price_string)
+    except ValueError:
+        return "Error: bad price argument"
 
     try:
-        color = util.get_color(color)
-    except:
+        color = util.parse_color(color_string)
+    except ValueError:
         return "Error: bad color argument"
 
-    if currency == 'BTC':
-        try:
-            usd_per_coin = util.get_usd_per_btc()
-        except:
-            return "Error: Mt Gox error"
-    elif currency == 'LTC':
-        try:
-            usd_per_coin = util.get_usd_per_ltc()
-        except:
-            return 'Error: BTC-e error'
-    else:
-        return 'Error: unsupported currency: ' + currency
+    try:
+        exchange_rate = util.get_exchange_rate(input_currency, output_currency)
+    except KeyError:
+        return 'Error: unsupported currency pair - %s -> %s' % (input_currency, output_currency)
+    except Exception:
+        return 'Error: exchange rate error'
 
-    price = price_usd / usd_per_coin
+    output_price = price * exchange_rate
 
-    img_io = util.get_image_io(price, currency, color)
+    img_io = util.get_image_io(output_price, output_currency, color)
 
     return send_file(img_io, attachment_filename='img.png')
 
@@ -121,13 +104,17 @@ def priceimgadv():
 def balimg(address=None, color='0'):
     """Serve image with address balance."""
     try:
-        address = float(util.get_balance(address))
-    except:
+        balance = float(util.get_balance(address))
+    except ValueError:
         return "Error: bad address argument"
+    except Exception:
+        return 'Error: Blockchain.info error'
+
     try:
-        color = util.get_color(color)
-    except:
+        color = util.parse_color(color)
+    except ValueError:
         return "Error: bad color argument"
-    img_io = util.get_image_io(address, 'BTC', color)
+
+    img_io = util.get_image_io(balance, 'BTC', color)
 
     return send_file(img_io, attachment_filename='img.png')
