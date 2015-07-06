@@ -65,15 +65,16 @@ for fancier options in the future. The URL format is of the form:
 
 Arguments:
 
-- `price` the desired price in USD (required)
-- `currency` should be "BTC" or "LTC" (without quotes). Defaults to "BTC".
-- `color` same as in the basic version above.
+- `price`: the desired price in USD, e.g. `10.0`. Include a currency code to use
+  something else as your reference, like `1.5EUR`.
+- `currency`: should be `BTC` or `LTC`. Defaults to `BTC`.
+- `color`: same as in the basic version above.
 
 Example:
 
-    http://btc-priceimg.herokuapp.com/advimg?price=10+USD&currency=BTC&color=f00
+    http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=BTC&color=f00
 
-<img src="http://btc-priceimg.herokuapp.com/advimg?price=10+USD&currency=BTC&color=f00">
+<img src="http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=BTC&color=f00">
 
 
 ## Balance Checker
