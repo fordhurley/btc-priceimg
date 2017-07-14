@@ -126,11 +126,11 @@ def get_exchange_rate(input_currency, output_currency):
 
 def get_btc_rate(currency):
     currency = currency.upper()
-    url = 'https://api.bitcoinaverage.com/ticker/global/%s/' % currency
+    url = 'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC%s' % currency
     r = requests.get(url)
-    r.raise_for_status
+    r.raise_for_status()
     data = r.json()
-    per_btc = float(data['24h_avg'])
+    per_btc = float(data['averages']['day'])
     return 1.0 / per_btc
 
 
