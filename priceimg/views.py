@@ -22,6 +22,8 @@ import util
 
 _body_html = None
 
+MAX_DPR = 4
+
 @app.route('/')
 def home():
     """Serve the home page."""
@@ -34,8 +36,10 @@ def home():
 
 @app.route('/img')
 @app.route('/img/<price_usd>')
+@app.route('/img@<dpr>/<price_usd>')
 @app.route('/img/<price_usd>/<color>')
-def priceimg(price_usd=None, color='0'):
+@app.route('/img@<dpr>/<price_usd>/<color>')
+def priceimg(dpr='1x', price_usd=None, color='0'):
     """Serve the image.
 
     The StringIO trick is from here:
@@ -44,12 +48,22 @@ def priceimg(price_usd=None, color='0'):
     try:
         price_usd = float(price_usd)
     except ValueError:
-        return "Error: bad USD price argument"
+        return 'Error: bad USD price argument'
 
     try:
         color = util.parse_color(color)
     except ValueError:
-        return "Error: bad color argument"
+        return 'Error: bad color argument'
+
+    try:
+        dpr = float(dpr.rstrip('x'))
+    except Exception:
+        return 'Error: bad dpr argument'
+
+    if dpr > MAX_DPR:
+        return 'Error: maximum dpr is %d' % MAX_DPR
+    if dpr <= 0:
+        return 'Error: dpr must be greater than 0'
 
     try:
         btc_per_usd = util.get_exchange_rate('USD', 'BTC')
@@ -58,7 +72,7 @@ def priceimg(price_usd=None, color='0'):
 
     price_btc = price_usd * btc_per_usd
 
-    img_io = util.get_image_io(price_btc, 'BTC', color)
+    img_io = util.get_image_io(dpr, price_btc, 'BTC', color)
 
     return send_file(img_io, attachment_filename='img.png')
 
@@ -73,16 +87,27 @@ def priceimgadv():
     price_string = request.args.get('price')
     output_currency = request.args.get('currency', 'BTC').upper()
     color_string = request.args.get('color', '0')
+    dpr_string = request.args.get('dpr', '1x')
 
     try:
         price, input_currency = util.parse_price(price_string)
-    except ValueError:
-        return "Error: bad price argument"
+    except Exception:
+        return 'Error: bad price argument'
 
     try:
         color = util.parse_color(color_string)
-    except ValueError:
-        return "Error: bad color argument"
+    except Exception:
+        return 'Error: bad color argument'
+
+    try:
+        dpr = float(dpr_string.rstrip('x'))
+    except Exception:
+        return 'Error: bad dpr argument'
+
+    if dpr > MAX_DPR:
+        return 'Error: maximum dpr is %d' % MAX_DPR
+    if dpr <= 0:
+        return 'Error: dpr must be greater than 0'
 
     try:
         exchange_rate = util.get_exchange_rate(input_currency, output_currency)
@@ -93,15 +118,17 @@ def priceimgadv():
 
     output_price = price * exchange_rate
 
-    img_io = util.get_image_io(output_price, output_currency, color)
+    img_io = util.get_image_io(dpr, output_price, output_currency, color)
 
     return send_file(img_io, attachment_filename='img.png')
 
 
 @app.route('/balance')
 @app.route('/balance/<address>')
+@app.route('/balance@<dpr>/<address>')
 @app.route('/balance/<address>/<color>')
-def balimg(address=None, color='0'):
+@app.route('/balance@<dpr>/<address>/<color>')
+def balimg(dpr='1x', address=None, color='0'):
     """Serve image with address balance."""
     try:
         balance = float(util.get_balance(address))
@@ -115,6 +142,16 @@ def balimg(address=None, color='0'):
     except ValueError:
         return "Error: bad color argument"
 
-    img_io = util.get_image_io(balance, 'BTC', color)
+    try:
+        dpr = float(dpr.rstrip('x'))
+    except Exception:
+        return 'Error: bad dpr argument'
+
+    if dpr > MAX_DPR:
+        return 'Error: maximum dpr is %d' % MAX_DPR
+    if dpr <= 0:
+        return 'Error: dpr must be greater than 0'
+
+    img_io = util.get_image_io(dpr, balance, 'BTC', color)
 
     return send_file(img_io, attachment_filename='img.png')

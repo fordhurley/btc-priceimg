@@ -145,7 +145,7 @@ def get_ltc_per_usd():
     return 1.0 / usd_per_ltc
 
 
-def generate_image(price, currency, color):
+def generate_image(dpr, price, currency, color):
     """Generate an Image object.
 
     price is a float, and currency is a three letter string
@@ -158,6 +158,9 @@ def generate_image(price, currency, color):
     w = int(len(price_str) * 30 + 16)
     h = 30
 
+    w *= dpr
+    h *= dpr
+
     cmd = ['convert']
 
     cmd.append('-size')
@@ -169,7 +172,7 @@ def generate_image(price, currency, color):
     cmd.append(app.config['FONT_PATH'])
 
     cmd.append('-pointsize')
-    cmd.append('14')
+    cmd.append('{0}'.format(int(15 * dpr)))
 
     cmd.append('-gravity')
     cmd.append('center')
@@ -190,16 +193,16 @@ def generate_image(price, currency, color):
     return img
 
 
-def get_image_io(price, currency, color):
+def get_image_io(dpr, price, currency, color):
     """Get the StringIO object containing the image.
 
     Also cached, with a name containing the BTC price and color."""
 
-    img_name = 'img_{0:f}_{1}_{2}[0]_{2}[1]_{2}[2]'.format(price, currency, color)
+    img_name = 'img_{0:f}_{1}_{2}[0]_{2}[1]_{2}[2]_{3}x'.format(price, currency, color, dpr)
     img_io = cache.get(img_name)
 
     if img_io is None:
-        img = generate_image(price, currency, color)
+        img = generate_image(dpr, price, currency, color)
         img_io = StringIO()
         img_io.write(img)
         img_io.seek(0)
