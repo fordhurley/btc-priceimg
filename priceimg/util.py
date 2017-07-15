@@ -38,6 +38,7 @@ def get_balance(address):
     """
     url = 'http://blockchain.info/rawaddr/' + address + '?format=json'
     r = requests.get(url)
+    r.raise_for_status()
     data = r.json()
     balance = data['final_balance'] / 1e8
     return balance
@@ -138,6 +139,7 @@ def get_btc_rate(currency):
 def get_ltc_per_usd():
     url = 'https://btc-e.com/api/2/ltc_usd/ticker'
     r = requests.get(url)
+    r.raise_for_status()
     data = r.json()
     usd_per_ltc = float(data['ticker']['avg'])
     return 1.0 / usd_per_ltc
@@ -148,12 +150,11 @@ def generate_image(price, currency, color):
 
     price is a float, and currency is a three letter string
     to be shown after the price (e.g., 'BTC').
-
-    To try to get better looking images, the original image
-    is 4x larger and it is scaled down with antialiasing.
     """
 
     price_str = '{0:.4f} {1}'.format(price, currency)
+
+    # Just needs to be big enough, it will be trimmed.
     w = int(len(price_str) * 30 + 16)
     h = 30
 
