@@ -97,18 +97,18 @@ As in the basic version above, the color argument is optional and accepts html-l
 
 Example:
 
-    http://btc-priceimg.herokuapp.com/balance/122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm
+    http://btc-priceimg.herokuapp.com/balance/1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h
 
-<img src="http://btc-priceimg.herokuapp.com/balance/122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm">
+<img src="http://btc-priceimg.herokuapp.com/balance/1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h">
 
 This endpoint also includes a high resolution form:
 
 Example:
 
-    http://btc-priceimg.herokuapp.com/balance@2x/122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm
+    http://btc-priceimg.herokuapp.com/balance@2x/1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h
 
-<img style="height: 11px" src="http://btc-priceimg.herokuapp.com/balance@2x/122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm">
+<img style="height: 11px" src="http://btc-priceimg.herokuapp.com/balance@2x/1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h">
 
 
 by <a href="http://fordhurley.com">Ford Hurley</a>
-(<a href="bitcoin:122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm?label=btc-priceimg">122LV3CNADj1yHU2tFPEhcCWR5QbfMzNcm</a>)
+(<a href="bitcoin:1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h?label=btc-priceimg">1E765eZrLQnhANCmgBSu3Hy2DbZktEFQ7h</a>)
