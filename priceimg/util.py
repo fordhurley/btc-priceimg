@@ -26,6 +26,7 @@ from priceimg import app, cache
 def download_asset(url, extension=''):
     with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as f:
         r = requests.get(url)
+        r.raise_for_status()
         f.write(r.content)
         return f.name
 
