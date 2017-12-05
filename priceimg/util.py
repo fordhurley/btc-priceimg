@@ -152,7 +152,7 @@ def generate_image(dpr, price, currency, color):
     to be shown after the price (e.g., 'BTC').
     """
 
-    price_str = '{0:.4f} {1}'.format(price, currency)
+    price_str = '{0:.6f} {1}'.format(price, currency)
 
     # Just needs to be big enough, it will be trimmed.
     w = int(len(price_str) * 30 + 16)
