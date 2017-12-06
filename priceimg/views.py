@@ -29,7 +29,7 @@ def home():
     """Serve the home page."""
     global _body_html
     if _body_html is None:
-        with open('README.md') as f:
+        with open('USAGE.md') as f:
             _body_html = misaka.html(f.read())
     return render_template('index.html', body=_body_html)
 

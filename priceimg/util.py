@@ -92,6 +92,7 @@ def parse_color(color):
 
     if color[0] == '#':
         color = color[1:]
+
     if len(color) == 1:
         rgb = color * 2, color * 2, color * 2
     elif len(color) == 3:
