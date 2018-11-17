@@ -13,8 +13,8 @@ Problems? Suggestions? [Open an issue](https://github.com/fordhurley/btc-priceim
 
 Source available on [GitHub](https://github.com/fordhurley/btc-priceimg).
 
-The advanced version of the tool allows for a choice of currency (BTC or LTC for now).
-Read about it [below](#advanced).
+The advanced version of the tool allows for a choice of currency (anything
+supported by BitcoinAverage). Read about it [below](#advanced).
 
 
 ## Usage
@@ -74,15 +74,15 @@ Arguments:
 
 - `price`: the desired price in USD, e.g. `10.0`. Include a currency code to use
   something else as your reference, like `1.5EUR`.
-- `currency`: should be `BTC` or `LTC`. Defaults to `BTC`.
+- `currency`: e.g. `BTC`, `ETH`, `LTC`. Defaults to `BTC`.
 - `color`: same as in the basic version above.
 - `dpr`: device pixel ratio, e.g. `2x`. Defaults to `1x`.
 
 Example:
 
-    http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=BTC&color=f00&dpr=1x
+    http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=ETH&color=f00&dpr=1x
 
-<img src="http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=BTC&color=f00&dpr=1x">
+<img src="http://btc-priceimg.herokuapp.com/advimg?price=10USD&currency=ETH&color=f00&dpr=1x">
 
 
 ## Balance Checker

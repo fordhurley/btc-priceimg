@@ -111,39 +111,26 @@ def get_exchange_rate(input_currency, output_currency):
 
     Caches the result for five minutes.
     """
-    input_currency = input_currency.lower()
-    output_currency = output_currency.lower()
+    input_currency = input_currency.upper()
+    output_currency = output_currency.upper()
     key = '%s_per_%s' % (output_currency, input_currency)
     rate = cache.get(key)
     if rate is None:
-        if output_currency == 'btc':
-            rate = get_btc_rate(input_currency)
-        elif output_currency == 'ltc' and input_currency == 'usd':
-            rate = get_ltc_per_usd()
-        else:
-            raise ValueError('unsupported currency pair')
+        rate = _query_exchange_rate(input_currency, output_currency)
         cache.set(key, rate, timeout=300)
         # TODO: cache the inverse while we have it?
     return rate
 
 
-def get_btc_rate(currency):
-    currency = currency.upper()
-    url = 'https://apiv2.bitcoinaverage.com/indices/global/ticker/BTC%s' % currency
+def _query_exchange_rate(input_currency, output_currency):
+    url = 'https://apiv2.bitcoinaverage.com/indices/global/ticker/'
+    url += output_currency
+    url += input_currency
     r = requests.get(url)
     r.raise_for_status()
     data = r.json()
-    per_btc = float(data['averages']['day'])
-    return 1.0 / per_btc
-
-
-def get_ltc_per_usd():
-    url = 'https://btc-e.com/api/2/ltc_usd/ticker'
-    r = requests.get(url)
-    r.raise_for_status()
-    data = r.json()
-    usd_per_ltc = float(data['ticker']['avg'])
-    return 1.0 / usd_per_ltc
+    input_per_output = float(data['averages']['day'])
+    return 1.0 / input_per_output
 
 
 def generate_image(dpr, price, currency, color):
