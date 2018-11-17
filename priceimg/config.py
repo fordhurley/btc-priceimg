@@ -28,5 +28,3 @@ app.config.from_pyfile(CONFIG_FILE)
 app.config['FONT_URL'] = os.environ.get('FONT_URL')
 if app.config['FONT_URL']:
     app.config['FONT_PATH'] = util.download_asset(app.config['FONT_URL'], '.ttf')
-
-app.config['GA_TRACKING'] = os.environ.get('GA_TRACKING')
